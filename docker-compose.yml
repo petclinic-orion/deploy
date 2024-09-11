@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8.4
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=petclinic
+      - MYSQL_PASSWORD=petclinic
+      - MYSQL_DATABASE=petclinic
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+    profiles:
+      - mysql
+  api-gateway:
+    image: orion/api-gateway:1.0
+    ports:
+      - "10100:8080"
+    environment:
+    profiles:
+
+  petclinic:
+    image: orion/petclinic:1.0
+    ports:
+      - "10200:8080"
+    environment:
+    profiles:
+
+  auth-service:
+    image: orion/auth-service:1.0
+    ports:
+      - "10200:8080"
+    environment:
+    profiles:
+
+  grafana:
+    image: orion/grafana:1.0
+    ports:
+      - "10300:3000"
+    environment:
+    profiles:
+
+  prometheus:
+    image: orion/prometheus:1.0
+    ports:
+      - "10300:3000"
+    environment:
+    profiles:
