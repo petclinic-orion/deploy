@@ -1,0 +1,16 @@
+[submodule "analytics"]
+	path = analytics
+	url = git@github.com:petclinic-orion/analytics.git
+	branch = main
+[submodule "petclinic"]
+	path = petclinic
+	url = https://github.com/petclinic-orion/petclinic
+	branch = main
+[submodule "auth-service"]
+	path = auth-service
+	url = https://github.com/petclinic-orion/petclinic-auth
+	branch = main
+[submodule "api-gateway"]
+	path = api-gateway
+	url = git@github.com:petclinic-orion/gateway.git
+	branch = master
