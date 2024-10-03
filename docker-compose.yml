@@ -19,47 +19,45 @@ services:
       - petclinic-network
 
   api-gateway:
-    image: orion/api-gateway:1.0
+    build: ./api-gateway
     ports:
-      - "10100:8080"
+      - 10100:8080
+    volumes:
+      - ./config/api-gateway/application.yml:/config/application.yml
     environment:
-    profiles:
+      - SPRING_CONFIG_LOCATION=/config/application.yml
     networks:
       - petclinic-network
 
   petclinic:
-    image: orion/petclinic:1.0
-    ports:
-      - "10200:8080"
-    environment:
-    profiles:
+    build: ./petclinic
     networks:
       - petclinic-network
 
   auth-service:
-    image: orion/auth-service:1.0
-    ports:
-      - "10200:8080"
-    environment:
-    profiles:
+    build: ./auth-service
     networks:
       - petclinic-network
 
   grafana:
-    image: orion/grafana:1.0
+    build: ./analytics/grafana
     ports:
-      - "10300:3000"
-    environment:
-    profiles:
+      - 3000:3000
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     networks:
       - petclinic-network
 
   prometheus:
-    image: orion/prometheus:1.0
+    build: ./analytics/prometheus
     ports:
-      - "10300:3000"
-    environment:
-    profiles:
+      - 9090:9090
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     networks:
       - petclinic-network
 
