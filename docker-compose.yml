@@ -23,9 +23,9 @@ services:
     ports:
       - 10100:8080
     volumes:
-      - ./config/api-gateway/application.yml:/config/application.yml
+      - ./config/api-gateway/application.yml:/var/opt/application.yml
     environment:
-      - SPRING_CONFIG_LOCATION=/config/application.yml
+      - SPRING_CONFIG_LOCATION=/var/opt/application.yml
     networks:
       - petclinic-network
 
@@ -47,6 +47,8 @@ services:
       resources:
         limits:
           memory: 256M
+    volumes:
+      - ./config/grafana/all.yml:/etc/grafana/provisioning/datasources/all.yml
     networks:
       - petclinic-network
 
