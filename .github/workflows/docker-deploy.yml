@@ -1,0 +1,20 @@
+name: Docker Compose Demo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  compose-up:
+    runs-on: musyil-self-runner
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Compose
+        run: |
+          git submodule update
+          git submodule update --recursive --remote
+          docker-compose down
+          docker-compose up -d
