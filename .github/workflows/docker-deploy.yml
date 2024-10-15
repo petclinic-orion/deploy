@@ -3,7 +3,7 @@ name: Docker Compose Demo
 on:
   push:
     branches:
-      - main
+      - dockerhub-test
 
 jobs:
   compose-up:
