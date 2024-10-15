@@ -1,0 +1,21 @@
+name: Docker Compose Demo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  compose-up:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Compose
+        run: |
+          git submodule init
+          git submodule update
+          git submodule update --recursive --remote
+          docker compose down
+          docker compose up -d
