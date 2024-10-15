@@ -1,0 +1,132 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:20.10.16
+        options: --privileged
+        ports:
+          - 2375:2375
+        env:
+          DOCKER_TLS_CERTDIR: ""
+        # Kullanarak Docker daemon
+        # Referans: https://docs.github.com/en/actions/using-containerized-services/about-service-containers
+        # Not: Docker-in-Docker burada çalıştırılmayacak, sadece build için kullanılacak
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      - name: Run Tests
+        run: mvn test
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker Images
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          
+          # auth-service
+          docker build -t ${{ secrets.DOCKERHUB_REPO }}/auth-service:$IMAGE_TAG ./auth-service
+          docker push ${{ secrets.DOCKERHUB_REPO }}/auth-service:$IMAGE_TAG
+
+          # api-gateway
+          docker build -t ${{ secrets.DOCKERHUB_REPO }}/api-gateway:$IMAGE_TAG ./api-gateway
+          docker push ${{ secrets.DOCKERHUB_REPO }}/api-gateway:$IMAGE_TAG
+
+          # analytics
+          docker build -t ${{ secrets.DOCKERHUB_REPO }}/analytics:$IMAGE_TAG ./analytics
+          docker push ${{ secrets.DOCKERHUB_REPO }}/analytics:$IMAGE_TAG
+
+          # petclinic
+          docker build -t ${{ secrets.DOCKERHUB_REPO }}/petclinic:$IMAGE_TAG ./petclinic
+          docker push ${{ secrets.DOCKERHUB_REPO }}/petclinic:$IMAGE_TAG
+
+          # Optionally, tag as latest
+          docker tag ${{ secrets.DOCKERHUB_REPO }}/auth-service:$IMAGE_TAG ${{ secrets.DOCKERHUB_REPO }}/auth-service:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}/auth-service:latest
+
+          docker tag ${{ secrets.DOCKERHUB_REPO }}/api-gateway:$IMAGE_TAG ${{ secrets.DOCKERHUB_REPO }}/api-gateway:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}/api-gateway:latest
+
+          docker tag ${{ secrets.DOCKERHUB_REPO }}/analytics:$IMAGE_TAG ${{ secrets.DOCKERHUB_REPO }}/analytics:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}/analytics:latest
+
+          docker tag ${{ secrets.DOCKERHUB_REPO }}/petclinic:$IMAGE_TAG ${{ secrets.DOCKERHUB_REPO }}/petclinic:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}/petclinic:latest
+
+      - name: Update Docker Compose on Server
+        if: success()
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /path/to/deploys
+            sed -i 's/your_dockerhub_repo/auth-service:latest/g' docker-compose.yml
+            sed -i 's/your_dockerhub_repo/api-gateway:latest/g' docker-compose.yml
+            sed -i 's/your_dockerhub_repo/analytics:latest/g' docker-compose.yml
+            sed -i 's/your_dockerhub_repo/petclinic:latest/g' docker-compose.yml
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d
+
+  rollback:
+    name: Rollback on Failure
+    needs: build
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Rollback to Previous Version
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /path/to/deploys
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d
