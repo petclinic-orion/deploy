@@ -12,7 +12,6 @@ You should add self-hosted runner under the relevant repositories. If you add it
 Settings > Actions > Runners > New self-hosted runner
 ![img_4.png](img_4.png)
 
-
 ![img_5.png](img_5.png)
 
 Open Powershell and run commands. 
@@ -22,7 +21,6 @@ Reference: https://github.com/petclinic-orion/deploy/settings/actions/runners/ne
 If you get the following error about the policy, run this command
 ``...running scripts is disabled on this system. For more information, see about_Execution_Policies at...``
 ``PS C:\Users\<<user>>\actions-runner> Set-ExecutionPolicy RemoteSigned``
-
 
 
 ````
