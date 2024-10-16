@@ -16,16 +16,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Analytics Docker image
-        run: docker build -t analytics ./analytics/Dockerfile
+        run: docker build -t analytics ./deploy/analytics/
 
       - name: Build API Gateway Docker image
-        run: docker build -t api-gateway ./api-gateway/Dockerfile
+        run: docker build -t api-gateway ./deploy/api-gateway/
 
       - name: Build Auth Service Docker image
-        run: docker build -t auth-service ./auth-service/Dockerfile
+        run: docker build -t auth-service ./deploy/auth-service/
 
       - name: Build PetClinic Docker image
-        run: docker build -t petclinic ./petclinic/Dockerfile
+        run: docker build -t petclinic ./deploy/petclinic/
 
   # Rollback if build fails
   rollback:
