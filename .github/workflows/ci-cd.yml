@@ -8,13 +8,17 @@ on:
     branches:
       - dockerhub-test
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
+        
+      - name: Check files in working directory
+        run: ls -al ./deploy/analytics/
+      
       - name: Build Analytics Docker image
         run: docker build -t analytics ./deploy/analytics/
 
