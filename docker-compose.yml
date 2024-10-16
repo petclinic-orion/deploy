@@ -41,6 +41,8 @@ services:
 
   test-service:
     build: ./auth-service
+    networks:
+      - 123
 
   grafana:
     build: ./analytics/grafana
