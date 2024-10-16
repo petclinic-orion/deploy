@@ -39,6 +39,10 @@ services:
     networks:
       - petclinic-network
 
+  build: auth-service
+  networks:
+    - 123123
+
   grafana:
     build: ./analytics/grafana
     ports:
