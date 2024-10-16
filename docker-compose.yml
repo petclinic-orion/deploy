@@ -39,6 +39,9 @@ services:
     networks:
       - petclinic-network
 
+  test-service:
+    build: ./auth-service
+
   grafana:
     build: ./analytics/grafana
     ports:
