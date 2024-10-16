@@ -43,6 +43,7 @@ services:
     build: ./auth-service
     networks:
       - 123
+      - 123
 
   grafana:
     build: ./analytics/grafana
