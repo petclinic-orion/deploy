@@ -19,13 +19,12 @@ jobs:
           submodules: true        # Submodule'leri de çek
           fetch-depth: 0          # Tam geçmişi al
 
-      - name: Update submodules recursively
+      - name: Initialize submodules
         run: |
-          git submodule update --init --recursive
+          git submodule init
+          git submodule update
+          git submodule update --recursive --remote
 
-      - name: Check files in working directory
-        run: ls -al ./deploy/analytics/
-      
       - name: Build Analytics Docker image
         run: docker build -t analytics ./deploy/analytics/
 
