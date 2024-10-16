@@ -17,5 +17,5 @@ jobs:
           git submodule init
           git submodule update
           git submodule update --recursive --remote
-          docker compose down
-          docker compose up -d
+#          docker compose down
+#          docker compose up -d
