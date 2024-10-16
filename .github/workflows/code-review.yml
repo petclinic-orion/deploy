@@ -1,6 +1,6 @@
 name: 'code-review'
 on: # rebuild any PRs and main branch changes
-  push:
+  pull_request:
     branches:
       - main
       - ai-code-review
