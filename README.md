@@ -107,5 +107,3 @@ PS C:\Users\<<user>>\actions-runner> ./run.cmd
 You should see the name of your own computer here. It should be active. 
 
 ![img_3.png](img_3.png)
-
-test text
