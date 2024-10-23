@@ -19,7 +19,9 @@ services:
       - petclinic-network
 
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
     ports:
       - 10100:8080
     volumes:
@@ -30,17 +32,23 @@ services:
       - petclinic-network
 
   petclinic:
-    build: ./petclinic
+    build:
+      context: ./petclinic
+      dockerfile: Dockerfile
     networks:
       - petclinic-network
 
   auth-service:
-    build: ./auth-service
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
     networks:
       - petclinic-network
 
   grafana:
-    build: ./analytics/grafana
+    build:
+      context: ./analytics/grafana
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
     deploy:
@@ -53,7 +61,9 @@ services:
       - petclinic-network
 
   prometheus:
-    build: ./analytics/prometheus
+    build:
+      context: ./analytics/prometheus
+      dockerfile: Dockerfile
     ports:
       - 9090:9090
     deploy:
