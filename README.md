@@ -108,4 +108,4 @@ You should see the name of your own computer here. It should be active.
 
 ![img_3.png](img_3.png)
 
-hello world
+good bye world
